@@ -26,3 +26,5 @@ let fred: Grault = new Grault(baz, [1, 2, 3]);
 // console.log(foo(baz));
 
 console.log(fred.getGarply());
+
+document.body.innerHTML = fred.getGarply();
