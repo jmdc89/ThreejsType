@@ -5,7 +5,8 @@
     "outDir": "../../dist/client",
     "baseUrl": ".",
     "paths": {
-      "/build/three.module.js": ["../../node_modules/@types/THREE"]
+      "/build/three.module.js": ["../../node_modules/@types/THREE"],
+      "/jsm/*": ["../../node_modules/three/examples/jsm/*"]
     },
     "moduleResolution": "node"
   },
