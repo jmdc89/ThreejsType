@@ -28,14 +28,22 @@ scene.add(cube);
 
 camera.position.z = 2;
 
-var animate = function () {
-  requestAnimationFrame(animate);
+window.addEventListener("resize", onWindowResize, false);
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  render();
+}
 
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
+// var animate = function () {
+//   requestAnimationFrame(animate);
 
-  renderer.render(scene, camera);
-};
+//   cube.rotation.x += 0.01;
+//   cube.rotation.y += 0.01;
+
+//   renderer.render(scene, camera);
+// };
 
 function render() {
   renderer.render(scene, camera);
