@@ -3,12 +3,20 @@ import { OrbitControls } from "/jsm/controls/OrbitControls";
 
 const scene: THREE.Scene = new THREE.Scene();
 
-const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(
+const camera1: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(
   75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
+  1,
+  2,
+  10
 );
+// const camera2: THREE.OrtographicCamera = new THREE.OrtographicCamera(
+//   -2,
+//   2,
+//   2,
+//   -2,
+//   0.1,
+//   10
+// );
 
 const canvas1: HTMLCanvasElement = <HTMLCanvasElement>(
   document.getElementById("c1")
@@ -26,7 +34,7 @@ const renderer2: THREE.WebGLRenderer = new THREE.WebGLRenderer({
 renderer2.setSize(200, 200);
 // document.body.appendChild(renderer.domElement);
 
-const controls = new OrbitControls(camera, renderer1.domElement);
+const controls = new OrbitControls(camera1, renderer1.domElement);
 
 const geometry: THREE.BoxGeometry = new THREE.BoxGeometry();
 const material: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial({
@@ -37,7 +45,8 @@ const material: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial({
 const cube: THREE.Mesh = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
-camera.position.z = 2;
+camera1.position.z = 2;
+// camera2.position.z = 2;
 
 var animate = function () {
   requestAnimationFrame(animate);
@@ -47,8 +56,8 @@ var animate = function () {
 
   controls.update();
 
-  renderer1.render(scene, camera);
-  renderer2.render(scene, camera);
+  renderer1.render(scene, camera1);
+  // renderer2.render(scene, camera2);
 };
 
 animate();
