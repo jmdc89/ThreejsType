@@ -13,7 +13,7 @@ const material = new THREE.MeshBasicMaterial({
 });
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
-camera.position.z = 2;
+camera.position.z = 10;
 var animate = function () {
     requestAnimationFrame(animate);
     cube.rotation.x += 0.01;
