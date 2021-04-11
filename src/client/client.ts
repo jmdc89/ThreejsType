@@ -28,27 +28,18 @@ scene.add(cube);
 
 camera.position.z = 2;
 
-window.addEventListener("resize", onWindowResize, false);
-function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  render();
-}
+var animate = function () {
+  requestAnimationFrame(animate);
 
-// var animate = function () {
-//   requestAnimationFrame(animate);
+  cube.rotation.x += 0.01;
+  cube.rotation.y += 0.01;
 
-//   cube.rotation.x += 0.01;
-//   cube.rotation.y += 0.01;
+  renderer.render(scene, camera);
+};
 
-//   renderer.render(scene, camera);
-// };
-
-function render() {
+function render {
   renderer.render(scene, camera);
 }
 
-render();
-
+render()
 // animate();
