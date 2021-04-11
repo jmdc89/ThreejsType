@@ -36,6 +36,15 @@ class App {
         )
       )
     );
+    app.use(
+      "/jsm/libs/dat.gui.module",
+      express.static(
+        path.join(
+          __dirname,
+          "../../node_modules/three/examples/jsm/libs/dat.gui.module.js"
+        )
+      )
+    );
 
     this.server = new http.Server(app);
   }
