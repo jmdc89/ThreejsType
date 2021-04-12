@@ -4,6 +4,8 @@ import Stats from "/jsm/libs/stats.module";
 import { GUI } from "/jsm/libs/dat.gui.module";
 
 const scene: THREE.Scene = new THREE.Scene();
+const axesHelper = new THREE.AxesHelper(5);
+scene.add(axesHelper);
 
 const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(
   75,
