@@ -43,13 +43,20 @@ document.body.appendChild(stats.dom);
 
 const gui = new GUI();
 const cubeFolder = gui.addFolder("Cube");
-cubeFolder.add(cube.rotation, "x", 0, Math.PI * 2, 0.01);
-cubeFolder.add(cube.rotation, "y", 0, Math.PI * 2, 0.01);
-cubeFolder.add(cube.rotation, "z", 0, Math.PI * 2, 0.01);
+const cubeRotationFolder = cubeFolder.addFolder("Rotation");
+cubeRotationFolder.add(cube.rotation, "x", 0, Math.PI * 2, 0.01);
+cubeRotationFolder.add(cube.rotation, "y", 0, Math.PI * 2, 0.01);
+cubeRotationFolder.add(cube.rotation, "z", 0, Math.PI * 2, 0.01);
+const cubePositionFolder = cubeFolder.addFolder("Position");
+cubePositionFolder.add(cube.position, "x", -10, 10);
+cubePositionFolder.add(cube.position, "y", -10, 10);
+cubePositionFolder.add(cube.position, "z", -10, 10);
+const cubeScaleFolder = cubeFolder.addFolder("Scale");
+cubeScaleFolder.add(cube.scale, "x", -5, 5, 0.1);
+cubeScaleFolder.add(cube.scale, "y", -5, 5, 0.1);
+cubeScaleFolder.add(cube.scale, "z", -5, 5, 0.1);
+cubeFolder.add(cube, "visible", true);
 cubeFolder.open();
-const cameraFolder = gui.addFolder("Camera");
-cameraFolder.add(camera.position, "z", 0, 10, 0.01);
-cameraFolder.open();
 
 var animate = function () {
   requestAnimationFrame(animate);
@@ -57,7 +64,7 @@ var animate = function () {
   // cube.rotation.x += 0.01;
   // cube.rotation.y += 0.01;
 
-  renderer.render(scene, camera);
+  render();
 
   stats.update();
 };
