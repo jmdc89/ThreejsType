@@ -21,14 +21,20 @@ document.body.appendChild(renderer.domElement);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.addEventListener("change", render);
 
-const geometry: THREE.BoxGeometry = new THREE.BoxGeometry();
+const boxgeometry: THREE.BoxGeometry = new THREE.BoxGeometry();
+const spheregeometry: THREE.SphereGeometry = new THREE.SphereGeometry();
+
 const material: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial({
   color: 0x00ff00,
   wireframe: true,
 });
 
-const cube: THREE.Mesh = new THREE.Mesh(geometry, material);
+const cube: THREE.Mesh = new THREE.Mesh(boxgeometry, material);
+cube.position.x = 5;
 scene.add(cube);
+
+const sphere: THREE.Mesh = new THREE.Mesh(spheregeometry, material);
+scene.add(sphere);
 
 camera.position.z = 2;
 
@@ -100,6 +106,53 @@ function regenerateBoxGeometry() {
   );
   cube.geometry.dispose();
   cube.geometry = newGeometry;
+}
+
+var sphereData = {
+  radius: 1,
+  widthSegments: 8,
+  heightSegments: 6,
+  phiStart: 0,
+  phiLength: Math.PI * 2,
+  thetaStart: 0,
+  thetaLength: Math.PI,
+};
+const sphereFolder = gui.addFolder("Sphere");
+const spherePropertiesFolder = sphereFolder.addFolder("Properties");
+spherePropertiesFolder
+  .add(sphereData, "radius", 0.1, 30)
+  .onChange(regenerateSphereGeometry);
+spherePropertiesFolder
+  .add(sphereData, "widthSegments", 1, 32)
+  .onChange(regenerateSphereGeometry);
+spherePropertiesFolder
+  .add(sphereData, "heightSegments", 1, 16)
+  .onChange(regenerateSphereGeometry);
+spherePropertiesFolder
+  .add(sphereData, "phiStart", 0, Math.PI * 2)
+  .onChange(regenerateSphereGeometry);
+spherePropertiesFolder
+  .add(sphereData, "phiLength", 0, Math.PI * 2)
+  .onChange(regenerateSphereGeometry);
+spherePropertiesFolder
+  .add(sphereData, "thetaStart", 0, Math.PI)
+  .onChange(regenerateSphereGeometry);
+spherePropertiesFolder
+  .add(sphereData, "thetaLength", 0, Math.PI)
+  .onChange(regenerateSphereGeometry);
+
+function regenerateSphereGeometry() {
+  let newGeometry = new THREE.SphereGeometry(
+    sphereData.radius,
+    sphereData.widthSegments,
+    sphereData.heightSegments,
+    sphereData.phiStart,
+    sphereData.phiLength,
+    sphereData.thetaStart,
+    sphereData.thetaLength
+  );
+  sphere.geometry.dispose();
+  sphere.geometry = newGeometry;
 }
 
 var animate = function () {
