@@ -23,8 +23,8 @@ const icosahedronGeometry = new THREE.IcosahedronGeometry(1, 0);
 const planeGeometry = new THREE.PlaneGeometry();
 const torusKnotGeometry = new THREE.TorusKnotGeometry();
 const material = new THREE.MeshBasicMaterial(); //{ color: 0x00ff00, wireframe: true })
-// const texture = new THREE.TextureLoader().load("img/grid.png");
-// material.map = texture;
+const texture = new THREE.TextureLoader().load("img/grid.png");
+material.map = texture;
 const envTexture = new THREE.CubeTextureLoader().load([
     "img/px_50.png",
     "img/nx_50.png",
@@ -96,9 +96,11 @@ meshBasicMaterialFolder.addColor(data, "color").onChange(() => {
 });
 meshBasicMaterialFolder.add(material, "wireframe");
 //meshBasicMaterialFolder.add(material, 'wireframeLinewidth', 0, 10);
-//meshBasicMaterialFolder.add(material, 'combine', options.combine).onChange(() => updateMaterial())
-//meshBasicMaterialFolder.add(material, 'reflectivity', 0, 1);
-//meshBasicMaterialFolder.add(material, 'refractionRatio', 0, 1);
+meshBasicMaterialFolder
+    .add(material, "combine", options.combine)
+    .onChange(() => updateMaterial());
+meshBasicMaterialFolder.add(material, "reflectivity", 0, 1);
+meshBasicMaterialFolder.add(material, "refractionRatio", 0, 1);
 meshBasicMaterialFolder.open();
 function updateMaterial() {
     material.side = Number(material.side);
