@@ -23,6 +23,7 @@ controls.addEventListener("change", render);
 
 const boxgeometry: THREE.BoxGeometry = new THREE.BoxGeometry();
 const spheregeometry: THREE.SphereGeometry = new THREE.SphereGeometry();
+const icosahedronGeometry: THREE.IcosahedronGeometry = new THREE.IcosahedronGeometry();
 
 const material: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial({
   color: 0x00ff00,
@@ -34,7 +35,11 @@ cube.position.x = 5;
 scene.add(cube);
 
 const sphere: THREE.Mesh = new THREE.Mesh(spheregeometry, material);
+sphere.position.x = -5;
 scene.add(sphere);
+
+const icosahedron: THREE.Mesh = new THREE.Mesh(icosahedronGeometry, material);
+scene.add(icosahedron);
 
 camera.position.z = 2;
 
@@ -153,6 +158,29 @@ function regenerateSphereGeometry() {
   );
   sphere.geometry.dispose();
   sphere.geometry = newGeometry;
+}
+
+var icosahedronData = {
+  radius: 1,
+  detail: 0,
+};
+const icosahedronFolder = gui.addFolder("Icosahedron");
+const icosahedronPropertiesFolder = icosahedronFolder.addFolder("Properties");
+icosahedronPropertiesFolder
+  .add(icosahedronData, "radius", 0.1, 10)
+  .onChange(regenerateIcosahedronGeometry);
+icosahedronPropertiesFolder
+  .add(icosahedronData, "detail", 0, 5)
+  .step(1)
+  .onChange(regenerateIcosahedronGeometry);
+
+function regenerateIcosahedronGeometry() {
+  let newGeometry = new THREE.IcosahedronGeometry(
+    icosahedronData.radius,
+    icosahedronData.detail
+  );
+  icosahedron.geometry.dispose();
+  icosahedron.geometry = newGeometry;
 }
 
 var animate = function () {
