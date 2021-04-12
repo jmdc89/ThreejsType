@@ -37,11 +37,10 @@ const icosahedronGeometry: THREE.IcosahedronGeometry = new THREE.IcosahedronGeom
 const planeGeometry: THREE.PlaneGeometry = new THREE.PlaneGeometry();
 const torusKnotGeometry: THREE.TorusKnotGeometry = new THREE.TorusKnotGeometry();
 
-const material: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial({
-  color: 0x00ff00,
-  wireframe: true,
-});
-//const material: THREE.MeshNormalMaterial = new THREE.MeshNormalMaterial()
+// const material: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial();
+const material: THREE.MeshNormalMaterial = new THREE.MeshNormalMaterial();
+material.transparent = true;
+material.opacity = 0.25;
 
 const cube: THREE.Mesh = new THREE.Mesh(boxGeometry, material);
 cube.position.x = 5;
@@ -85,10 +84,10 @@ document.body.appendChild(stats.dom);
 // }
 const gui = new GUI();
 const materialFolder = gui.addFolder("THREE.Material");
-// materialFolder.add(material, 'transparent')
-// materialFolder.add(material, 'opacity', 0, 1, 0.01)
-// materialFolder.add(material, 'depthTest')
-// materialFolder.add(material, 'depthWrite')
+materialFolder.add(material, "transparent");
+materialFolder.add(material, "opacity", 0, 1, 0.01);
+materialFolder.add(material, "depthTest");
+materialFolder.add(material, "depthWrite");
 // materialFolder.add(material, 'alphaTest', 0, 1, 0.01).onChange(() => updateMaterial())
 // materialFolder.add(material, 'visible')
 // materialFolder.add(material, 'side', options.side).onChange(() => updateMaterial())
