@@ -44,6 +44,39 @@ cubeScaleFolder.add(cube.scale, "y", -5, 5, 0.1);
 cubeScaleFolder.add(cube.scale, "z", -5, 5, 0.1);
 cubeFolder.add(cube, "visible", true);
 cubeFolder.open();
+var cubeData = {
+    width: 1,
+    height: 1,
+    depth: 1,
+    widthSegments: 1,
+    heightSegments: 1,
+    depthSegments: 1,
+};
+const cubePropertiesFolder = cubeFolder.addFolder("Properties");
+cubePropertiesFolder
+    .add(cubeData, "width", 1, 30)
+    .onChange(regenerateBoxGeometry)
+    .onFinishChange(() => console.dir(cube.geometry));
+cubePropertiesFolder
+    .add(cubeData, "height", 1, 30)
+    .onChange(regenerateBoxGeometry);
+cubePropertiesFolder
+    .add(cubeData, "depth", 1, 30)
+    .onChange(regenerateBoxGeometry);
+cubePropertiesFolder
+    .add(cubeData, "widthSegments", 1, 30)
+    .onChange(regenerateBoxGeometry);
+cubePropertiesFolder
+    .add(cubeData, "heightSegments", 1, 30)
+    .onChange(regenerateBoxGeometry);
+cubePropertiesFolder
+    .add(cubeData, "depthSegments", 1, 30)
+    .onChange(regenerateBoxGeometry);
+function regenerateBoxGeometry() {
+    let newGeometry = new THREE.BoxGeometry(cubeData.width, cubeData.height, cubeData.depth, cubeData.widthSegments, cubeData.heightSegments, cubeData.depthSegments);
+    cube.geometry.dispose();
+    cube.geometry = newGeometry;
+}
 var animate = function () {
     requestAnimationFrame(animate);
     // cube.rotation.x += 0.01;
