@@ -26,13 +26,19 @@ const sphereGeometry = new THREE.SphereGeometry();
 const icosahedronGeometry = new THREE.IcosahedronGeometry(1, 0);
 const planeGeometry = new THREE.PlaneGeometry();
 const torusKnotGeometry = new THREE.TorusKnotGeometry();
-const material = new THREE.MeshPhysicalMaterial({});
+const material = new THREE.MeshMatcapMaterial();
 // const texture = new THREE.TextureLoader().load("img/grid.png")
 // material.map = texture
 // const envTexture = new THREE.CubeTextureLoader().load(["img/px_50.png", "img/nx_50.png", "img/py_50.png", "img/ny_50.png", "img/pz_50.png", "img/nz_50.png"])
 // envTexture.mapping = THREE.CubeReflectionMapping
 // //envTexture.mapping = THREE.CubeRefractionMapping
 // material.envMap = envTexture
+const matcapTexture = new THREE.TextureLoader().load("img/matcap-opal.png");
+//const matcapTexture = new THREE.TextureLoader().load("img/matcap-crystal.png")
+//const matcapTexture = new THREE.TextureLoader().load("img/matcap-gold.png")
+//const matcapTexture = new THREE.TextureLoader().load("img/matcap-red-light.png")
+//const matcapTexture = new THREE.TextureLoader().load("img/matcap-green-yellow-pink.png")
+material.matcap = matcapTexture;
 const cube = new THREE.Mesh(boxGeometry, material);
 cube.position.x = 5;
 scene.add(cube);
@@ -64,11 +70,6 @@ var options = {
         BackSide: THREE.BackSide,
         DoubleSide: THREE.DoubleSide,
     },
-    combine: {
-        MultiplyOperation: THREE.MultiplyOperation,
-        MixOperation: THREE.MixOperation,
-        AddOperation: THREE.AddOperation,
-    },
 };
 const gui = new GUI();
 const materialFolder = gui.addFolder("THREE.Material");
@@ -86,34 +87,21 @@ materialFolder
 materialFolder.open();
 var data = {
     color: material.color.getHex(),
-    emissive: material.emissive.getHex(),
 };
-var meshPhysicalMaterialFolder = gui.addFolder("THREE.MeshPhysicalMaterial");
-meshPhysicalMaterialFolder.addColor(data, "color").onChange(() => {
+var meshMatcapMaterialFolder = gui.addFolder("THREE.MeshMatcapMaterial");
+meshMatcapMaterialFolder.addColor(data, "color").onChange(() => {
     material.color.setHex(Number(data.color.toString().replace("#", "0x")));
 });
-meshPhysicalMaterialFolder.addColor(data, "emissive").onChange(() => {
-    material.emissive.setHex(Number(data.emissive.toString().replace("#", "0x")));
-});
-meshPhysicalMaterialFolder.add(material, "wireframe");
-meshPhysicalMaterialFolder
+meshMatcapMaterialFolder
     .add(material, "flatShading")
     .onChange(() => updateMaterial());
-meshPhysicalMaterialFolder.add(material, "reflectivity", 0, 1);
-meshPhysicalMaterialFolder.add(material, "refractionRatio", 0, 1);
-meshPhysicalMaterialFolder.add(material, "roughness", 0, 1);
-meshPhysicalMaterialFolder.add(material, "metalness", 0, 1);
-meshPhysicalMaterialFolder.add(material, "clearcoat", 0, 1, 0.01);
-meshPhysicalMaterialFolder.add(material, "clearcoatRoughness", 0, 1, 0.01);
-meshPhysicalMaterialFolder.open();
+meshMatcapMaterialFolder.open();
 function updateMaterial() {
     material.side = Number(material.side);
     material.needsUpdate = true;
 }
 var animate = function () {
     requestAnimationFrame(animate);
-    torusKnot.rotation.x += 0.01;
-    torusKnot.rotation.y += 0.01;
     render();
     stats.update();
 };
