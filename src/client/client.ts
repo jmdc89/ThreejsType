@@ -43,7 +43,7 @@ const icosahedronGeometry: THREE.IcosahedronGeometry = new THREE.IcosahedronGeom
 const planeGeometry: THREE.PlaneGeometry = new THREE.PlaneGeometry();
 const torusKnotGeometry: THREE.TorusKnotGeometry = new THREE.TorusKnotGeometry();
 
-const material: THREE.MeshStandardMaterial = new THREE.MeshStandardMaterial();
+const material: THREE.MeshPhysicalMaterial = new THREE.MeshPhysicalMaterial({});
 
 // const texture = new THREE.TextureLoader().load("img/grid.png")
 // material.map = texture
@@ -91,6 +91,11 @@ var options = {
     BackSide: THREE.BackSide,
     DoubleSide: THREE.DoubleSide,
   },
+  combine: {
+    MultiplyOperation: THREE.MultiplyOperation,
+    MixOperation: THREE.MixOperation,
+    AddOperation: THREE.AddOperation,
+  },
 };
 const gui = new GUI();
 
@@ -113,21 +118,25 @@ var data = {
   emissive: material.emissive.getHex(),
 };
 
-var meshStandardMaterialFolder = gui.addFolder("THREE.MeshStandardMaterial");
+var meshPhysicalMaterialFolder = gui.addFolder("THREE.MeshPhysicalMaterial");
 
-meshStandardMaterialFolder.addColor(data, "color").onChange(() => {
+meshPhysicalMaterialFolder.addColor(data, "color").onChange(() => {
   material.color.setHex(Number(data.color.toString().replace("#", "0x")));
 });
-meshStandardMaterialFolder.addColor(data, "emissive").onChange(() => {
+meshPhysicalMaterialFolder.addColor(data, "emissive").onChange(() => {
   material.emissive.setHex(Number(data.emissive.toString().replace("#", "0x")));
 });
-meshStandardMaterialFolder.add(material, "wireframe");
-meshStandardMaterialFolder
+meshPhysicalMaterialFolder.add(material, "wireframe");
+meshPhysicalMaterialFolder
   .add(material, "flatShading")
   .onChange(() => updateMaterial());
-//meshStandardMaterialFolder.add( material, 'roughness', 0, 1 );
-//meshStandardMaterialFolder.add( material, 'metalness', 0, 1 );
-meshStandardMaterialFolder.open();
+meshPhysicalMaterialFolder.add(material, "reflectivity", 0, 1);
+meshPhysicalMaterialFolder.add(material, "refractionRatio", 0, 1);
+meshPhysicalMaterialFolder.add(material, "roughness", 0, 1);
+meshPhysicalMaterialFolder.add(material, "metalness", 0, 1);
+//meshPhysicalMaterialFolder.add(material, 'clearcoat', 0, 1, 0.01)
+//meshPhysicalMaterialFolder.add(material, 'clearcoatRoughness', 0, 1, 0.01)
+meshPhysicalMaterialFolder.open();
 
 function updateMaterial() {
   material.side = Number(material.side);
@@ -137,6 +146,8 @@ function updateMaterial() {
 var animate = function () {
   requestAnimationFrame(animate);
 
+  //torusKnot.rotation.x+=.01
+  //torusKnot.rotation.y+=.01
   render();
 
   stats.update();
