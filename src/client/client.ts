@@ -116,7 +116,7 @@ materialFolder.open();
 var data = {
   color: material.color.getHex(),
   emissive: material.emissive.getHex(),
-  //specular: material.specular.getHex()
+  specular: material.specular.getHex(),
 };
 
 var meshPhongMaterialFolder = gui.addFolder("THREE.MeshPhongMaterial");
@@ -127,8 +127,10 @@ meshPhongMaterialFolder.addColor(data, "color").onChange(() => {
 meshPhongMaterialFolder.addColor(data, "emissive").onChange(() => {
   material.emissive.setHex(Number(data.emissive.toString().replace("#", "0x")));
 });
-//meshPhongMaterialFolder.addColor(data, 'specular').onChange(() => { material.specular.setHex(Number(data.specular.toString().replace('#', '0x'))) });
-//meshPhongMaterialFolder.add(material, 'shininess', 0, 1024);
+meshPhongMaterialFolder.addColor(data, "specular").onChange(() => {
+  material.specular.setHex(Number(data.specular.toString().replace("#", "0x")));
+});
+meshPhongMaterialFolder.add(material, "shininess", 0, 1024);
 meshPhongMaterialFolder.add(material, "wireframe");
 meshPhongMaterialFolder.add(material, "wireframeLinewidth", 0, 10);
 meshPhongMaterialFolder
