@@ -1,22 +1,27 @@
+// If using Relative Import References
 import * as THREE from "/build/three.module.js";
 import { OrbitControls } from "/jsm/controls/OrbitControls";
 import Stats from "/jsm/libs/stats.module";
 import { GUI } from "/jsm/libs/dat.gui.module";
 
-const scene: THREE.Scene = new THREE.Scene();
-//scene.background = new THREE.Color(0xff0000)
+// If using Module Specifiers
+//import * as THREE from 'three'
+//import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+//import Stats from 'three/examples/jsm/libs/stats.module'
+//import { GUI } from 'three/examples/jsm/libs/dat.gui.module'
 
-const axesHelper = new THREE.AxesHelper(5);
-scene.add(axesHelper);
+const scene1: THREE.Scene = new THREE.Scene();
+const scene2: THREE.Scene = new THREE.Scene();
 
-const light = new THREE.PointLight(0xffffff, 2);
-light.position.set(0, 5, 10);
-scene.add(light);
+const axesHelper1 = new THREE.AxesHelper(5);
+scene1.add(axesHelper1);
+const axesHelper2 = new THREE.AxesHelper(5);
+scene2.add(axesHelper2);
 
 const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
-  0.1,
+  0.01,
   1000
 );
 
@@ -26,36 +31,69 @@ document.body.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.screenSpacePanning = true; //so that panning up and down doesn't zoom in/out
-//controls.addEventListener('change', render)
 
-const planeGeometry: THREE.PlaneGeometry = new THREE.PlaneGeometry(
-  3.6,
-  1.8,
-  360,
-  180
-);
+const planeGeometry1: THREE.PlaneGeometry = new THREE.PlaneGeometry();
+const planeGeometry2: THREE.PlaneGeometry = new THREE.PlaneGeometry();
 
-const material: THREE.MeshPhongMaterial = new THREE.MeshPhongMaterial();
+//const texture1 = new THREE.TextureLoader().load("img/grid.png")
+//const texture2 = new THREE.TextureLoader().load("img/grid.png")
 
-//const texture = new THREE.TextureLoader().load("img/grid.png")
-const texture = new THREE.TextureLoader().load("img/worldColour.5400x2700.jpg");
-material.map = texture;
-// const envTexture = new THREE.CubeTextureLoader().load(["img/px_eso0932a.jpg", "img/nx_eso0932a.jpg", "img/py_eso0932a.jpg", "img/ny_eso0932a.jpg", "img/pz_eso0932a.jpg", "img/nz_eso0932a.jpg"])
-// envTexture.mapping = THREE.CubeReflectionMapping
-// material.envMap = envTexture
+let mipmap = (size: number, color: string) => {
+  const imageCanvas = document.createElement("canvas") as HTMLCanvasElement;
+  const context = imageCanvas.getContext("2d") as CanvasRenderingContext2D;
+  imageCanvas.width = size;
+  imageCanvas.height = size;
+  context.fillStyle = "#888888";
+  context.fillRect(0, 0, size, size);
+  context.fillStyle = color;
+  context.fillRect(0, 0, size / 2, size / 2);
+  context.fillRect(size / 2, size / 2, size / 2, size / 2);
+  return context.getImageData(0, 0, size, size);
+};
 
-//const specularTexture = new THREE.TextureLoader().load("img/earthSpecular.jpg")
-// material.specularMap = specularTexture
+const texture1 = new THREE.CanvasTexture(document.createElement("canvas"));
+texture1.mipmaps[0] = mipmap(128, "#ff0000");
+texture1.mipmaps[1] = mipmap(64, "#00ff00");
+texture1.mipmaps[2] = mipmap(32, "#0000ff");
+texture1.mipmaps[3] = mipmap(16, "#880000");
+texture1.mipmaps[4] = mipmap(8, "#008800");
+texture1.mipmaps[5] = mipmap(4, "#000088");
+texture1.mipmaps[6] = mipmap(2, "#008888");
+texture1.mipmaps[7] = mipmap(1, "#880088");
+texture1.repeat.set(5, 5);
+texture1.wrapS = THREE.RepeatWrapping;
+texture1.wrapT = THREE.RepeatWrapping;
 
-const displacementMap = new THREE.TextureLoader().load(
-  "img/gebco_bathy.5400x2700_8bit.jpg"
-);
-material.displacementMap = displacementMap;
+const texture2 = new THREE.CanvasTexture(document.createElement("canvas"));
+texture2.mipmaps[0] = mipmap(128, "#ff0000");
+texture2.mipmaps[1] = mipmap(64, "#00ff00");
+texture2.mipmaps[2] = mipmap(32, "#0000ff");
+texture2.mipmaps[3] = mipmap(16, "#880000");
+texture2.mipmaps[4] = mipmap(8, "#008800");
+texture2.mipmaps[5] = mipmap(4, "#000088");
+texture2.mipmaps[6] = mipmap(2, "#008888");
+texture2.mipmaps[7] = mipmap(1, "#880088");
+texture2.repeat.set(5, 5);
+texture2.wrapS = THREE.RepeatWrapping;
+texture2.wrapT = THREE.RepeatWrapping;
 
-const plane: THREE.Mesh = new THREE.Mesh(planeGeometry, material);
-scene.add(plane);
+const material1: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial({
+  map: texture1,
+});
+const material2: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial({
+  map: texture2,
+});
 
-camera.position.z = 3;
+texture2.minFilter = THREE.NearestFilter;
+texture2.magFilter = THREE.NearestFilter;
+
+const plane1: THREE.Mesh = new THREE.Mesh(planeGeometry1, material1);
+const plane2: THREE.Mesh = new THREE.Mesh(planeGeometry2, material2);
+
+scene1.add(plane1);
+scene2.add(plane2);
+
+camera.position.z = 1;
 
 window.addEventListener("resize", onWindowResize, false);
 function onWindowResize() {
@@ -65,100 +103,41 @@ function onWindowResize() {
   render();
 }
 
-const stats = Stats();
-document.body.appendChild(stats.dom);
-
 var options = {
-  side: {
-    FrontSide: THREE.FrontSide,
-    BackSide: THREE.BackSide,
-    DoubleSide: THREE.DoubleSide,
+  minFilters: {
+    NearestFilter: THREE.NearestFilter,
+    NearestMipMapLinearFilter: THREE.NearestMipMapLinearFilter,
+    NearestMipMapNearestFilter: THREE.NearestMipMapNearestFilter,
+    "LinearFilter ": THREE.LinearFilter,
+    "LinearMipMapLinearFilter (Default)": THREE.LinearMipMapLinearFilter,
+    LinearMipmapNearestFilter: THREE.LinearMipmapNearestFilter,
+  },
+  magFilters: {
+    NearestFilter: THREE.NearestFilter,
+    "LinearFilter (Default)": THREE.LinearFilter,
   },
 };
 const gui = new GUI();
+const textureFolder = gui.addFolder("THREE.Texture");
+textureFolder
+  .add(texture2, "minFilter", options.minFilters)
+  .onChange(() => updateMinFilter());
+textureFolder
+  .add(texture2, "magFilter", options.magFilters)
+  .onChange(() => updateMagFilter());
+textureFolder.open();
 
-const materialFolder = gui.addFolder("THREE.Material");
-materialFolder.add(material, "transparent");
-materialFolder.add(material, "opacity", 0, 1, 0.01);
-materialFolder.add(material, "depthTest");
-materialFolder.add(material, "depthWrite");
-materialFolder
-  .add(material, "alphaTest", 0, 1, 0.01)
-  .onChange(() => updateMaterial());
-materialFolder.add(material, "visible");
-materialFolder
-  .add(material, "side", options.side)
-  .onChange(() => updateMaterial());
-//materialFolder.open()
-
-var data = {
-  color: material.color.getHex(),
-  emissive: material.emissive.getHex(),
-  specular: material.specular.getHex(),
-};
-
-var meshPhongMaterialFolder = gui.addFolder("THREE.meshPhongMaterialFolder");
-
-meshPhongMaterialFolder.addColor(data, "color").onChange(() => {
-  material.color.setHex(Number(data.color.toString().replace("#", "0x")));
-});
-meshPhongMaterialFolder.addColor(data, "emissive").onChange(() => {
-  material.emissive.setHex(Number(data.emissive.toString().replace("#", "0x")));
-});
-meshPhongMaterialFolder.addColor(data, "specular").onChange(() => {
-  material.specular.setHex(Number(data.specular.toString().replace("#", "0x")));
-});
-meshPhongMaterialFolder.add(material, "shininess", 0, 1024);
-meshPhongMaterialFolder.add(material, "wireframe");
-meshPhongMaterialFolder
-  .add(material, "flatShading")
-  .onChange(() => updateMaterial());
-meshPhongMaterialFolder.add(material, "reflectivity", 0, 1);
-meshPhongMaterialFolder.add(material, "refractionRatio", 0, 1);
-meshPhongMaterialFolder.add(material, "displacementScale", 0, 1, 0.01);
-meshPhongMaterialFolder.add(material, "displacementBias", -1, 1, 0.01);
-meshPhongMaterialFolder.open();
-
-var planeData = {
-  width: 3.6,
-  height: 1.8,
-  widthSegments: 360,
-  heightSegments: 180,
-};
-const planePropertiesFolder = gui.addFolder("PlaneGeometry");
-//planePropertiesFolder.add(planeData, 'width', 1, 30).onChange(regeneratePlaneGeometry)
-//planePropertiesFolder.add(planeData, 'height', 1, 30).onChange(regeneratePlaneGeometry)
-planePropertiesFolder
-  .add(planeData, "widthSegments", 1, 360)
-  .onChange(regeneratePlaneGeometry);
-planePropertiesFolder
-  .add(planeData, "heightSegments", 1, 180)
-  .onChange(regeneratePlaneGeometry);
-planePropertiesFolder.open();
-
-function regeneratePlaneGeometry() {
-  let newGeometry = new THREE.PlaneGeometry(
-    planeData.width,
-    planeData.height,
-    planeData.widthSegments,
-    planeData.heightSegments
-  );
-  plane.geometry.dispose();
-  plane.geometry = newGeometry;
+function updateMinFilter() {
+  texture2.minFilter = Number(texture2.minFilter);
+  texture2.needsUpdate = true;
+}
+function updateMagFilter() {
+  texture2.magFilter = Number(texture2.magFilter);
+  texture2.needsUpdate = true;
 }
 
-// const textureFolder = gui.addFolder("Texture")
-// textureFolder.add(texture.repeat, 'x', 0.1, 1, 0.1)
-// textureFolder.add(texture.repeat, 'y', 0.1, 1, 0.1)
-// textureFolder.add(texture.center, 'x', 0, 1, 0.001)
-// textureFolder.add(texture.center, 'y', 0, 1, 0.001)
-
-// textureFolder.open()
-
-function updateMaterial() {
-  material.side = Number(material.side);
-  material.needsUpdate = true;
-}
+const stats = Stats();
+document.body.appendChild(stats.dom);
 
 var animate = function () {
   requestAnimationFrame(animate);
@@ -169,6 +148,19 @@ var animate = function () {
 };
 
 function render() {
-  renderer.render(scene, camera);
+  renderer.setScissorTest(true);
+
+  renderer.setScissor(0, 0, window.innerWidth / 2 - 2, window.innerHeight);
+  renderer.render(scene1, camera);
+
+  renderer.setScissor(
+    window.innerWidth / 2,
+    0,
+    window.innerWidth / 2 - 2,
+    window.innerHeight
+  );
+  renderer.render(scene2, camera);
+
+  renderer.setScissorTest(false);
 }
 animate();
