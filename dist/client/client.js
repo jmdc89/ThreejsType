@@ -1,13 +1,7 @@
-// If using Relative Import References
 import * as THREE from "/build/three.module.js";
 import { OrbitControls } from "/jsm/controls/OrbitControls";
 import Stats from "/jsm/libs/stats.module";
 import { GUI } from "/jsm/libs/dat.gui.module";
-// If using Module Specifiers
-//import * as THREE from 'three'
-//import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-//import Stats from 'three/examples/jsm/libs/stats.module'
-//import { GUI } from 'three/examples/jsm/libs/dat.gui.module'
 const scene = new THREE.Scene();
 //scene.background = new THREE.Color(0xff0000)
 const axesHelper = new THREE.AxesHelper(5);
@@ -22,7 +16,7 @@ document.body.appendChild(renderer.domElement);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.screenSpacePanning = true; //so that panning up and down doesn't zoom in/out
 //controls.addEventListener('change', render)
-const planeGeometry = new THREE.PlaneGeometry(3.6, 1.8); //, 360, 180)
+const planeGeometry = new THREE.PlaneGeometry(3.6, 1.8, 360, 180);
 const material = new THREE.MeshPhongMaterial();
 //const texture = new THREE.TextureLoader().load("img/grid.png")
 const texture = new THREE.TextureLoader().load("img/worldColour.5400x2700.jpg");
@@ -95,8 +89,8 @@ meshPhongMaterialFolder.open();
 var planeData = {
     width: 3.6,
     height: 1.8,
-    widthSegments: 1,
-    heightSegments: 1,
+    widthSegments: 360,
+    heightSegments: 180,
 };
 const planePropertiesFolder = gui.addFolder("PlaneGeometry");
 //planePropertiesFolder.add(planeData, 'width', 1, 30).onChange(regeneratePlaneGeometry)
@@ -113,6 +107,12 @@ function regeneratePlaneGeometry() {
     plane.geometry.dispose();
     plane.geometry = newGeometry;
 }
+// const textureFolder = gui.addFolder("Texture")
+// textureFolder.add(texture.repeat, 'x', 0.1, 1, 0.1)
+// textureFolder.add(texture.repeat, 'y', 0.1, 1, 0.1)
+// textureFolder.add(texture.center, 'x', 0, 1, 0.001)
+// textureFolder.add(texture.center, 'y', 0, 1, 0.001)
+// textureFolder.open()
 function updateMaterial() {
     material.side = Number(material.side);
     material.needsUpdate = true;
