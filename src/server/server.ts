@@ -72,6 +72,15 @@ class App {
         )
       )
     );
+    app.use(
+      "/jsm/controls/DragControls",
+      express.static(
+        path.join(
+          __dirname,
+          "../../node_modules/three/examples/jsm/controls/DragControls.js"
+        )
+      )
+    );
 
     this.server = new http.Server(app);
   }

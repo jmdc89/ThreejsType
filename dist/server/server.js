@@ -19,6 +19,7 @@ class App {
         app.use("/jsm/controls/OrbitControls", express_1.default.static(path_1.default.join(__dirname, "../../node_modules/three/examples/jsm/controls/OrbitControls.js")));
         app.use("/jsm/controls/TrackballControls", express_1.default.static(path_1.default.join(__dirname, "../../node_modules/three/examples/jsm/controls/TrackballControls.js")));
         app.use("/jsm/controls/PointerLockControls", express_1.default.static(path_1.default.join(__dirname, "../../node_modules/three/examples/jsm/controls/PointerLockControls.js")));
+        app.use("/jsm/controls/DragControls", express_1.default.static(path_1.default.join(__dirname, "../../node_modules/three/examples/jsm/controls/DragControls.js")));
         this.server = new http_1.default.Server(app);
     }
     Start() {
