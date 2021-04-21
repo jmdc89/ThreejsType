@@ -45,6 +45,15 @@ class App {
         )
       )
     );
+    app.use(
+      "/jsm/controls/OrbitControls",
+      express.static(
+        path.join(
+          __dirname,
+          "../../node_modules/three/examples/jsm/controls/OrbitControls.js"
+        )
+      )
+    );
 
     this.server = new http.Server(app);
   }
