@@ -63,6 +63,15 @@ class App {
         )
       )
     );
+    app.use(
+      "/jsm/controls/PointerLockControls",
+      express.static(
+        path.join(
+          __dirname,
+          "../../node_modules/three/examples/jsm/controls/PointerLockControls.js"
+        )
+      )
+    );
 
     this.server = new http.Server(app);
   }
