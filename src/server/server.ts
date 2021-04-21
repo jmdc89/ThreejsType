@@ -54,6 +54,15 @@ class App {
         )
       )
     );
+    app.use(
+      "/jsm/controls/TrackballControls",
+      express.static(
+        path.join(
+          __dirname,
+          "../../node_modules/three/examples/jsm/controls/TrackballControls.js"
+        )
+      )
+    );
 
     this.server = new http.Server(app);
   }
