@@ -81,6 +81,15 @@ class App {
         )
       )
     );
+    app.use(
+      "/jsm/controls/TransformControls",
+      express.static(
+        path.join(
+          __dirname,
+          "../../node_modules/three/examples/jsm/controls/TransformControls.js"
+        )
+      )
+    );
 
     this.server = new http.Server(app);
   }
