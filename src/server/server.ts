@@ -28,15 +28,6 @@ class App {
       )
     );
     app.use(
-      "/jsm/loaders/GLTFLoader",
-      express.static(
-        path.join(
-          __dirname,
-          "../../node_modules/three/examples/jsm/loaders/GLTFLoader.js"
-        )
-      )
-    );
-    app.use(
       "/jsm/libs/stats.module",
       express.static(
         path.join(
@@ -46,14 +37,21 @@ class App {
       )
     );
     app.use(
-      "/jsm/libs/tween.module.min",
+      "/jsm/libs/dat.gui.module",
       express.static(
         path.join(
           __dirname,
-          "../../node_modules/three/examples/jsm/libs/tween.module.min.js"
+          "../../node_modules/three/examples/jsm/libs/dat.gui.module.js"
         )
       )
     );
+    app.use(
+      "/cannon/cannon.min",
+      express.static(
+        path.join(__dirname, "../../node_modules/cannon/build/cannon.min.js")
+      )
+    );
+
     this.server = new http.Server(app);
   }
 
