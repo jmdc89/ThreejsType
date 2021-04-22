@@ -28,6 +28,15 @@ class App {
       )
     );
     app.use(
+      "/jsm/loaders/MTLLoader",
+      express.static(
+        path.join(
+          __dirname,
+          "../../node_modules/three/examples/jsm/loaders/MTLLoader.js"
+        )
+      )
+    );
+    app.use(
       "/jsm/loaders/OBJLoader",
       express.static(
         path.join(
