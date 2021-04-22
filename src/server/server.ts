@@ -37,6 +37,21 @@ class App {
       )
     );
     app.use(
+      "/jsm/loaders/DRACOLoader",
+      express.static(
+        path.join(
+          __dirname,
+          "../../node_modules/three/examples/jsm/loaders/DRACOLoader.js"
+        )
+      )
+    );
+    app.use(
+      "/js/libs/draco/",
+      express.static(
+        path.join(__dirname, "../../node_modules/three/examples/js/libs/draco/")
+      )
+    );
+    app.use(
       "/jsm/libs/stats.module",
       express.static(
         path.join(

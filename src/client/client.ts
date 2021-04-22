@@ -1,15 +1,12 @@
 import * as THREE from "/build/three.module.js";
 import { OrbitControls } from "/jsm/controls/OrbitControls";
 import { GLTFLoader } from "/jsm/loaders/GLTFLoader";
+import { DRACOLoader } from "/jsm/loaders/DRACOLoader";
 import Stats from "/jsm/libs/stats.module";
 
 const scene: THREE.Scene = new THREE.Scene();
 const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
-
-var light = new THREE.SpotLight();
-light.position.set(5, 5, 5);
-scene.add(light);
 
 const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(
   75,
@@ -20,32 +17,36 @@ const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(
 camera.position.z = 2;
 
 const renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer();
-//renderer.physicallyCorrectLights = true
-//renderer.shadowMap.enabled = true
-renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.physicallyCorrectLights = true;
+renderer.shadowMap.enabled = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
+var dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath("/js/libs/draco/");
+dracoLoader.setDecoderConfig({ type: "js" });
+
 const loader = new GLTFLoader();
+loader.setDRACOLoader(dracoLoader);
 loader.load(
-  "models/monkey.glb",
+  "models/monkey_compressed.glb",
   function (gltf) {
-    // gltf.scene.traverse(function (child) {
-    //     if ((<THREE.Mesh>child).isMesh) {
-    //         let m = <THREE.Mesh>child
-    //         m.receiveShadow = true
-    //         m.castShadow = true
-    //     }
-    //     if ((<THREE.Light>child).isLight) {
-    //         let l = <THREE.Light>child
-    //         l.castShadow = true
-    //         //l.shadow.bias = -.003
-    //         l.shadow.mapSize.width = 2048
-    //         l.shadow.mapSize.height = 2048
-    //     }
-    // })
+    gltf.scene.traverse(function (child) {
+      if ((<THREE.Mesh>child).isMesh) {
+        let m = <THREE.Mesh>child;
+        m.receiveShadow = true;
+        m.castShadow = true;
+      }
+      if ((<THREE.Light>child).isLight) {
+        let l = <THREE.Light>child;
+        l.castShadow = true;
+        l.shadow.bias = -0.003;
+        l.shadow.mapSize.width = 2048;
+        l.shadow.mapSize.height = 2048;
+      }
+    });
     scene.add(gltf.scene);
   },
   (xhr) => {
