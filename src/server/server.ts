@@ -28,27 +28,39 @@ class App {
       )
     );
     app.use(
-      "/jsm/loaders/GLTFLoader",
+      "/jsm/loaders/FBXLoader",
       express.static(
         path.join(
           __dirname,
-          "../../node_modules/three/examples/jsm/loaders/GLTFLoader.js"
+          "../../node_modules/three/examples/jsm/loaders/FBXLoader.js"
         )
       )
     );
     app.use(
-      "/jsm/loaders/DRACOLoader",
+      "/jsm/libs/inflate.module.min.js",
       express.static(
         path.join(
           __dirname,
-          "../../node_modules/three/examples/jsm/loaders/DRACOLoader.js"
+          "../../node_modules/three/examples/jsm/libs/inflate.module.min.js"
         )
       )
     );
     app.use(
-      "/js/libs/draco/",
+      "/jsm/curves/NURBSCurve.js",
       express.static(
-        path.join(__dirname, "../../node_modules/three/examples/js/libs/draco/")
+        path.join(
+          __dirname,
+          "../../node_modules/three/examples/jsm/curves/NURBSCurve.js"
+        )
+      )
+    );
+    app.use(
+      "/jsm/curves/NURBSUtils.js",
+      express.static(
+        path.join(
+          __dirname,
+          "../../node_modules/three/examples/jsm/curves/NURBSUtils.js"
+        )
       )
     );
     app.use(

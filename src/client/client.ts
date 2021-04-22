@@ -1,12 +1,18 @@
 import * as THREE from "/build/three.module.js";
 import { OrbitControls } from "/jsm/controls/OrbitControls";
-import { GLTFLoader } from "/jsm/loaders/GLTFLoader";
-import { DRACOLoader } from "/jsm/loaders/DRACOLoader";
+import { FBXLoader } from "/jsm/loaders/FBXLoader";
 import Stats from "/jsm/libs/stats.module";
 
 const scene: THREE.Scene = new THREE.Scene();
 const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
+
+let light = new THREE.PointLight();
+light.position.set(0.8, 1.4, 1.0);
+scene.add(light);
+
+let ambientLight = new THREE.AmbientLight();
+scene.add(ambientLight);
 
 const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(
   75,
@@ -14,40 +20,32 @@ const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
-camera.position.z = 2;
+camera.position.set(0.8, 1.4, 1.0);
 
 const renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer();
-renderer.physicallyCorrectLights = true;
-renderer.shadowMap.enabled = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
+controls.screenSpacePanning = true;
+controls.target.set(0, 1, 0);
 
-var dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath("/js/libs/draco/");
-dracoLoader.setDecoderConfig({ type: "js" });
+const material: THREE.MeshNormalMaterial = new THREE.MeshNormalMaterial();
 
-const loader = new GLTFLoader();
-loader.setDRACOLoader(dracoLoader);
-loader.load(
-  "models/monkey_compressed.glb",
-  function (gltf) {
-    gltf.scene.traverse(function (child) {
-      if ((<THREE.Mesh>child).isMesh) {
-        let m = <THREE.Mesh>child;
-        m.receiveShadow = true;
-        m.castShadow = true;
-      }
-      if ((<THREE.Light>child).isLight) {
-        let l = <THREE.Light>child;
-        l.castShadow = true;
-        l.shadow.bias = -0.003;
-        l.shadow.mapSize.width = 2048;
-        l.shadow.mapSize.height = 2048;
-      }
-    });
-    scene.add(gltf.scene);
+const fbxLoader: FBXLoader = new FBXLoader();
+fbxLoader.load(
+  "models/kachujin_g_rosales.fbx",
+  (object) => {
+    // object.traverse(function (child) {
+    //     if ((<THREE.Mesh>child).isMesh) {
+    //         (<THREE.Mesh>child).material = material
+    //         if ((<THREE.Mesh>child).material) {
+    //             ((<THREE.Mesh>child).material as THREE.MeshBasicMaterial).transparent = false
+    //         }
+    //     }
+    // })
+    //object.scale.set(.01, .01, .01)
+    scene.add(object);
   },
   (xhr) => {
     console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
