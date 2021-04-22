@@ -2,6 +2,7 @@ import * as THREE from "/build/three.module.js";
 import { OrbitControls } from "/jsm/controls/OrbitControls";
 import { GLTFLoader } from "/jsm/loaders/GLTFLoader";
 import Stats from "/jsm/libs/stats.module";
+import { TWEEN } from "/jsm/libs/tween.module.min";
 
 const scene: THREE.Scene = new THREE.Scene();
 const axesHelper = new THREE.AxesHelper(5);
@@ -23,30 +24,9 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
+//controls.addEventListener('change', render) //this line is unnecessary if you are re-rendering within the animation loop
 
-// const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
-// const points = new Array();
-// points.push( new THREE.Vector3( 0, 0, 0 ) );
-// points.push( new THREE.Vector3( 0, 0, .25 ) );
-// const geometry = new THREE.BufferGeometry().setFromPoints( points );
-// const line = new THREE.Line( geometry, material );
-// scene.add( line );
-
-var arrowHelper = new THREE.ArrowHelper(
-  new THREE.Vector3(),
-  new THREE.Vector3(),
-  0.25,
-  0xffff00
-);
-scene.add(arrowHelper);
-
-const material: THREE.MeshNormalMaterial = new THREE.MeshNormalMaterial();
-
-const boxGeometry: THREE.BoxGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-const coneGeometry = new THREE.ConeGeometry(0.05, 0.2, 8);
-
-const raycaster = new THREE.Raycaster();
-const sceneMeshes = new Array();
+let sceneMeshes = new Array();
 
 const loader = new GLTFLoader();
 loader.load(
@@ -57,7 +37,7 @@ loader.load(
         let m = <THREE.Mesh>child;
         m.receiveShadow = true;
         m.castShadow = true;
-        (<THREE.MeshStandardMaterial>m.material).flatShading = true;
+        //(<THREE.MeshStandardMaterial>m.material).flatShading = true
         sceneMeshes.push(m);
       }
       if ((<THREE.Light>child).isLight) {
@@ -69,7 +49,6 @@ loader.load(
       }
     });
     scene.add(gltf.scene);
-    //sceneMeshes.push(gltf.scene)
   },
   (xhr) => {
     console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
@@ -87,39 +66,9 @@ function onWindowResize() {
   render();
 }
 
+const raycaster = new THREE.Raycaster();
+
 renderer.domElement.addEventListener("dblclick", onDoubleClick, false);
-renderer.domElement.addEventListener("mousemove", onMouseMove, false);
-
-function onMouseMove(event: MouseEvent) {
-  const mouse = {
-    x: (event.clientX / renderer.domElement.clientWidth) * 2 - 1,
-    y: -(event.clientY / renderer.domElement.clientHeight) * 2 + 1,
-  };
-
-  //console.log(mouse)
-
-  raycaster.setFromCamera(mouse, camera);
-
-  const intersects = raycaster.intersectObjects(sceneMeshes, false);
-
-  if (intersects.length > 0) {
-    //console.log(sceneMeshes.length + " " + intersects.length)
-    //console.log(intersects[0])
-    //console.log(intersects[0].object.userData.name + " " + intersects[0].distance + " ")
-    //console.log(intersects[0].face.normal)
-    // line.position.set(0, 0, 0);
-    // line.lookAt(intersects[0].face.normal);
-    // line.position.copy(intersects[0].point);
-
-    let n = new THREE.Vector3();
-    n.copy((intersects[0].face as THREE.Face3).normal);
-    n.transformDirection(intersects[0].object.matrixWorld);
-
-    arrowHelper.setDirection(n);
-    arrowHelper.position.copy(intersects[0].point);
-  }
-}
-
 function onDoubleClick(event: MouseEvent) {
   const mouse = {
     x: (event.clientX / renderer.domElement.clientWidth) * 2 - 1,
@@ -130,34 +79,33 @@ function onDoubleClick(event: MouseEvent) {
   const intersects = raycaster.intersectObjects(sceneMeshes, false);
 
   if (intersects.length > 0) {
-    let n = new THREE.Vector3();
-    n.copy((intersects[0].face as THREE.Face3).normal);
-    n.transformDirection(intersects[0].object.matrixWorld);
+    const p = intersects[0].point;
+    //controls.target.set(p.x, p.y, p.z)
 
-    //const cube: THREE.Mesh = new THREE.Mesh(boxGeometry, material)
-    const cube: THREE.Mesh = new THREE.Mesh(coneGeometry, material);
-
-    cube.lookAt(n);
-    cube.rotateX(Math.PI / 2);
-    cube.position.copy(intersects[0].point);
-    cube.position.addScaledVector(n, 0.1);
-
-    scene.add(cube);
-    sceneMeshes.push(cube);
+    // new TWEEN.Tween(controls.target)
+    //     .to({
+    //         x: p.x,
+    //         y: p.y,
+    //         z: p.z
+    //     }, 500)
+    //     //.delay (1000)
+    //     .easing(TWEEN.Easing.Cubic.Out)
+    //     //.onUpdate(() => render())
+    //     .start();
   }
 }
 
 const stats = Stats();
 document.body.appendChild(stats.dom);
 
+const clock: THREE.Clock = new THREE.Clock();
+
 var animate = function () {
   requestAnimationFrame(animate);
 
   controls.update();
 
-  // if (sceneMeshes.length > 1) {
-  //     sceneMeshes[1].rotation.x += .002
-  // }
+  TWEEN.update();
 
   render();
 

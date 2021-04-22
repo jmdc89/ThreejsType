@@ -45,7 +45,15 @@ class App {
         )
       )
     );
-
+    app.use(
+      "/jsm/libs/tween.module.min",
+      express.static(
+        path.join(
+          __dirname,
+          "../../node_modules/three/examples/jsm/libs/tween.module.min.js"
+        )
+      )
+    );
     this.server = new http.Server(app);
   }
 
