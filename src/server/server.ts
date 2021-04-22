@@ -28,38 +28,11 @@ class App {
       )
     );
     app.use(
-      "/jsm/loaders/FBXLoader",
+      "/jsm/loaders/GLTFLoader",
       express.static(
         path.join(
           __dirname,
-          "../../node_modules/three/examples/jsm/loaders/FBXLoader.js"
-        )
-      )
-    );
-    app.use(
-      "/jsm/libs/inflate.module.min.js",
-      express.static(
-        path.join(
-          __dirname,
-          "../../node_modules/three/examples/jsm/libs/inflate.module.min.js"
-        )
-      )
-    );
-    app.use(
-      "/jsm/curves/NURBSCurve.js",
-      express.static(
-        path.join(
-          __dirname,
-          "../../node_modules/three/examples/jsm/curves/NURBSCurve.js"
-        )
-      )
-    );
-    app.use(
-      "/jsm/curves/NURBSUtils.js",
-      express.static(
-        path.join(
-          __dirname,
-          "../../node_modules/three/examples/jsm/curves/NURBSUtils.js"
+          "../../node_modules/three/examples/jsm/loaders/GLTFLoader.js"
         )
       )
     );

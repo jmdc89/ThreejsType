@@ -1,113 +1,133 @@
 import * as THREE from "/build/three.module.js";
 import { OrbitControls } from "/jsm/controls/OrbitControls";
-import { FBXLoader } from "/jsm/loaders/FBXLoader";
+import { GLTF, GLTFLoader } from "/jsm/loaders/GLTFLoader";
 import Stats from "/jsm/libs/stats.module";
-import { GUI } from "/jsm/libs/dat.gui.module";
 
 const scene: THREE.Scene = new THREE.Scene();
-const axesHelper = new THREE.AxesHelper(5);
-scene.add(axesHelper);
-
-var light = new THREE.PointLight();
-light.position.set(2.5, 7.5, 15);
-scene.add(light);
 
 const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
-  0.1,
+  0.01,
   1000
 );
-camera.position.set(0.8, 1.4, 1.0);
+camera.position.set(4, 4, 4);
 
 const renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.screenSpacePanning = true;
-controls.target.set(0, 1, 0);
 
 let mixer: THREE.AnimationMixer;
 let modelReady = false;
-let animationActions: THREE.AnimationAction[] = new Array();
-let activeAction: THREE.AnimationAction;
-let lastAction: THREE.AnimationAction;
-const fbxLoader: FBXLoader = new FBXLoader();
 
-fbxLoader.load(
-  "models/vanguard_t_choonyung.fbx",
-  (object) => {
-    object.scale.set(0.01, 0.01, 0.01);
-    mixer = new THREE.AnimationMixer(object);
+const gltfLoader: GLTFLoader = new GLTFLoader();
 
-    let animationAction = mixer.clipAction((object as any).animations[0]);
-    animationActions.push(animationAction);
-    animationsFolder.add(animations, "default");
-    activeAction = animationActions[0];
+const dropzone = document.getElementById("dropzone") as HTMLDivElement;
 
-    scene.add(object);
+dropzone.ondragover = dropzone.ondragenter = function (evt) {
+  evt.preventDefault();
+};
+dropzone.ondrop = function (evt: DragEvent) {
+  evt.stopPropagation();
+  evt.preventDefault();
 
-    add an animation from another file
-    fbxLoader.load('models/vanguard@samba.fbx',
-        (object) => {
-            console.log("loaded samba")
-
-            let animationAction = mixer.clipAction((object as any).animations[0]);
-            animationActions.push(animationAction)
-            animationsFolder.add(animations, "samba")
-
-            //add an animation from another file
-            fbxLoader.load('models/vanguard@bellydance.fbx',
-                (object) => {
-                    console.log("loaded bellydance")
-                    let animationAction = mixer.clipAction((object as any).animations[0]);
-                    animationActions.push(animationAction)
-                    animationsFolder.add(animations, "bellydance")
-
-                    //add an animation from another file
-                    fbxLoader.load('models/vanguard@goofyrunning.fbx',
-                        (object) => {
-                            console.log("loaded goofyrunning");
-                            (object as any).animations[0].tracks.shift() //delete the specific track that moves the object forward while running
-                            //console.dir((object as any).animations[0])
-                            let animationAction = mixer.clipAction((object as any).animations[0]);
-                            animationActions.push(animationAction)
-                            animationsFolder.add(animations, "goofyrunning")
-
-                            modelReady = true
-                        },
-                        (xhr) => {
-                            console.log((xhr.loaded / xhr.total * 100) + '% loaded')
-                        },
-                        (error) => {
-                            console.log(error);
-                        }
-                    )
-                },
-                (xhr) => {
-                    console.log((xhr.loaded / xhr.total * 100) + '% loaded')
-                },
-                (error) => {
-                    console.log(error);
-                }
-            )
-        },
-        (xhr) => {
-            console.log((xhr.loaded / xhr.total * 100) + '% loaded')
-        },
-        (error) => {
-            console.log(error);
-        }
-    )
-  },
-  (xhr) => {
-    console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
-  },
-  (error) => {
-    console.log(error);
+  //clear the scene
+  for (let i = scene.children.length - 1; i >= 0; i--) {
+    scene.remove(scene.children[i]);
   }
-);
+  //clear the checkboxes
+  const myNode = document.getElementById("animationsPanel") as HTMLDivElement;
+  while (myNode.firstChild) {
+    myNode.removeChild(myNode.lastChild as any);
+  }
+
+  const axesHelper = new THREE.AxesHelper(5);
+  scene.add(axesHelper);
+
+  const light1 = new THREE.DirectionalLight(new THREE.Color(0xffcccc));
+  light1.position.set(-1, 1, 1);
+  scene.add(light1);
+
+  const light2 = new THREE.DirectionalLight(new THREE.Color(0xccffcc));
+  light2.position.set(1, 1, 1);
+  scene.add(light2);
+
+  const light3 = new THREE.DirectionalLight(new THREE.Color(0xccccff));
+  light3.position.set(0, -1, 0);
+  scene.add(light3);
+
+  const files = (evt.dataTransfer as DataTransfer).files;
+  const reader = new FileReader();
+  reader.onload = function () {
+    gltfLoader.parse(
+      reader.result as string,
+      "/",
+      (gltf: GLTF) => {
+        console.log(gltf.scene);
+
+        mixer = new THREE.AnimationMixer(gltf.scene);
+
+        console.log(gltf.animations);
+
+        if (gltf.animations.length > 0) {
+          const animationsPanel: HTMLDivElement = document.getElementById(
+            "animationsPanel"
+          ) as HTMLDivElement;
+          const ul: HTMLUListElement = document.createElement(
+            "UL"
+          ) as HTMLUListElement;
+          const ulElem = animationsPanel.appendChild(ul);
+
+          gltf.animations.forEach((a: THREE.AnimationClip, i) => {
+            const li: HTMLLIElement = document.createElement(
+              "UL"
+            ) as HTMLLIElement;
+            const liElem = ulElem.appendChild(li);
+
+            const checkBox = document.createElement(
+              "INPUT"
+            ) as HTMLInputElement;
+            checkBox.id = "checkbox_" + i;
+            checkBox.type = "checkbox";
+            checkBox.addEventListener("change", (e: Event) => {
+              if ((e.target as HTMLInputElement).checked) {
+                mixer.clipAction((gltf as any).animations[i]).play();
+              } else {
+                mixer.clipAction((gltf as any).animations[i]).stop();
+              }
+            });
+            liElem.appendChild(checkBox);
+
+            const label = document.createElement("LABEL") as HTMLLabelElement;
+            label.htmlFor = "checkbox_" + i;
+            label.innerHTML = a.name;
+            liElem.appendChild(label);
+          });
+        } else {
+          const animationsPanel: HTMLDivElement = document.getElementById(
+            "animationsPanel"
+          ) as HTMLDivElement;
+          animationsPanel.innerHTML = "No animations found in model";
+        }
+
+        scene.add(gltf.scene);
+
+        const bbox = new THREE.Box3().setFromObject(gltf.scene);
+        controls.target.x = (bbox.min.x + bbox.max.x) / 2;
+        controls.target.y = (bbox.min.y + bbox.max.y) / 2;
+        controls.target.z = (bbox.min.z + bbox.max.z) / 2;
+
+        modelReady = true;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  };
+  reader.readAsArrayBuffer(files[0]);
+};
 
 window.addEventListener("resize", onWindowResize, false);
 function onWindowResize() {
@@ -119,37 +139,6 @@ function onWindowResize() {
 
 const stats = Stats();
 document.body.appendChild(stats.dom);
-
-var animations = {
-  default: function () {
-    setAction(animationActions[0]);
-  },
-  samba: function () {
-    setAction(animationActions[1]);
-  },
-  bellydance: function () {
-    setAction(animationActions[2]);
-  },
-  goofyrunning: function () {
-    setAction(animationActions[3]);
-  },
-};
-
-const setAction = (toAction: THREE.AnimationAction) => {
-  if (toAction != activeAction) {
-    lastAction = activeAction;
-    activeAction = toAction;
-    lastAction.stop();
-    //lastAction.fadeOut(1)
-    activeAction.reset();
-    //activeAction.fadeIn(1)
-    activeAction.play();
-  }
-};
-
-const gui = new GUI();
-const animationsFolder = gui.addFolder("Animations");
-animationsFolder.open();
 
 const clock: THREE.Clock = new THREE.Clock();
 
