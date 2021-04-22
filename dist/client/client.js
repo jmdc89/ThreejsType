@@ -2,7 +2,7 @@ import * as THREE from "/build/three.module.js";
 import { OrbitControls } from "/jsm/controls/OrbitControls";
 import Stats from "/jsm/libs/stats.module";
 import { GUI } from "/jsm/libs/dat.gui.module";
-//import '/cannon/cannon.min'
+import "/cannon/cannon.min";
 const scene = new THREE.Scene();
 const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
@@ -34,11 +34,11 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.screenSpacePanning = true;
-// const world = new CANNON.World()
-// world.gravity.set(0, -9.82, 0)
-// //world.broadphase = new CANNON.NaiveBroadphase() //
-// //world.solver.iterations = 10
-// //world.allowSleep = true
+const world = new CANNON.World();
+world.gravity.set(0, -9.82, 0);
+world.broadphase = new CANNON.NaiveBroadphase(); //
+world.solver.iterations = 10;
+world.allowSleep = true;
 const normalMaterial = new THREE.MeshNormalMaterial();
 const phongMaterial = new THREE.MeshPhongMaterial();
 const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
@@ -60,13 +60,13 @@ sphereMesh.position.x = -1;
 sphereMesh.position.y = 3;
 sphereMesh.castShadow = true;
 scene.add(sphereMesh);
-// const sphereShape = new CANNON.Sphere(1)
-// const sphereBody = new CANNON.Body({ mass: 1 });
-// sphereBody.addShape(sphereShape)
-// sphereBody.position.x = sphereMesh.position.x
-// sphereBody.position.y = sphereMesh.position.y
-// sphereBody.position.z = sphereMesh.position.z
-// world.addBody(sphereBody)
+const sphereShape = new CANNON.Sphere(1);
+const sphereBody = new CANNON.Body({ mass: 1 });
+sphereBody.addShape(sphereShape);
+sphereBody.position.x = sphereMesh.position.x;
+sphereBody.position.y = sphereMesh.position.y;
+sphereBody.position.z = sphereMesh.position.z;
+world.addBody(sphereBody);
 const icosahedronGeometry = new THREE.IcosahedronGeometry(1, 0);
 const icosahedronMesh = new THREE.Mesh(icosahedronGeometry, normalMaterial);
 icosahedronMesh.position.x = 1;
